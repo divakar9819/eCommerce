@@ -6,6 +6,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Divakar Verma
@@ -27,6 +29,9 @@ public class Product extends BaseEntity implements Serializable {
     @JoinColumn(name = "category_id")
     @JsonIgnoreProperties("products")
     private Category category;
+
+    @OneToMany(mappedBy = "product",cascade = {CascadeType.PERSIST,CascadeType.MERGE})
+    private List<CartItem> cartItems = new ArrayList<>();
 
 
 

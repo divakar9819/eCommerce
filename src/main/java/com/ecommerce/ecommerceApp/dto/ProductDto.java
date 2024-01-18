@@ -14,17 +14,17 @@ import java.math.BigDecimal;
  * @mail_to: vermadivakar2022@gmail.com
  */
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Setter
-@Getter
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class ProductDto implements Serializable {
-    private int id;
-    private String productName;
-    private double price;
-    private double discount;
-    private String description;
-    @JsonIgnoreProperties("products")
-    private CategoryDto categoryDto;
-}
+//@NoArgsConstructor
+//@AllArgsConstructor
+//@Setter
+//@Getter
+//@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+//public class ProductDto implements Serializable {
+////    private int id;
+////    private String productName;
+////    private double price;
+////    private double discount;
+////    private String description;
+////    @JsonIgnoreProperties("products")
+////    private CategoryDto categoryDto;
+//}

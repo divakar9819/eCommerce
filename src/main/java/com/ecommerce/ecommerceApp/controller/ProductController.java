@@ -1,7 +1,7 @@
 package com.ecommerce.ecommerceApp.controller;
 
-import com.ecommerce.ecommerceApp.dto.ProductDto;
-import com.ecommerce.ecommerceApp.entity.Product;
+import com.ecommerce.ecommerceApp.payload.request.ProductRequest;
+import com.ecommerce.ecommerceApp.payload.response.ProductResponse;
 import com.ecommerce.ecommerceApp.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,22 +28,28 @@ public class ProductController {
     }
 
     @PostMapping("/createProduct")
-    public ResponseEntity<ProductDto> createProduct(@RequestBody Product product){
-        ProductDto createdProduct = productService.createProduct(product);
+    public ResponseEntity<ProductResponse> createProduct(@RequestBody ProductRequest productRequest){
+        ProductResponse createdProduct = productService.createProduct(productRequest);
         return new ResponseEntity<>(createdProduct, HttpStatus.CREATED);
     }
 
 
     @GetMapping("/getAllProduct")
-    public ResponseEntity<List<ProductDto>> getAllProduct(){
-        List<ProductDto> productDtos = productService.getAllProduct();
-        return new ResponseEntity<>(productDtos,HttpStatus.OK);
+    public ResponseEntity<List<ProductResponse>> getAllProduct(){
+        List<ProductResponse> productResponse = productService.getAllProduct();
+        return new ResponseEntity<>(productResponse,HttpStatus.OK);
     }
 
     @GetMapping ("/searchProductByCategory/{categoryName}")
-    public ResponseEntity<List<ProductDto>> searchProductByCategory(@PathVariable String categoryName){
-        List<ProductDto> productDtos = productService.searchProductByCategory(categoryName);
-        return new ResponseEntity<>(productDtos,HttpStatus.OK);
+    public ResponseEntity<List<ProductResponse>> searchProductByCategory(@PathVariable String categoryName){
+        List<ProductResponse> productResponses = productService.searchProductByCategory(categoryName);
+        return new ResponseEntity<>(productResponses,HttpStatus.OK);
+    }
+
+    @GetMapping("/getProductById/{id}")
+    public ResponseEntity<ProductResponse> getProductById(@PathVariable Integer id){
+        ProductResponse productResponses = productService.getProductById(id);
+        return new ResponseEntity<>(productResponses,HttpStatus.OK);
     }
 
 

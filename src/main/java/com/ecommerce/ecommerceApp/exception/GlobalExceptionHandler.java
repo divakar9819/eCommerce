@@ -1,6 +1,8 @@
 package com.ecommerce.ecommerceApp.exception;
 
+import com.ecommerce.ecommerceApp.exception.security.CustomSecurityException;
 import com.ecommerce.ecommerceApp.helper.response.ApiResponse;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -26,5 +28,29 @@ public class GlobalExceptionHandler {
         String message = ex.getMessage();
         ApiResponse apiResponse = new ApiResponse(message,false);
         return new ResponseEntity<>(apiResponse, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(CustomSecurityException.class)
+    public ResponseEntity<ApiResponse> handleCustomSecurityException(CustomSecurityException ex){
+        String message = ex.getMessage();
+        System.out.println("*************************************************");
+        ApiResponse apiResponse = new ApiResponse(message,false);
+        return new ResponseEntity<>(apiResponse,HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ApiResponse> handleGenericException(Exception ex){
+        String message = ex.getMessage();
+        System.out.println("*************************************************");
+        ApiResponse apiResponse = new ApiResponse(message,false);
+        return new ResponseEntity<>(apiResponse,HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ApiResponse> handleGenericException(DataIntegrityViolationException ex){
+        String message = ex.getMessage();
+        System.out.println("*************************************************");
+        ApiResponse apiResponse = new ApiResponse(message,false);
+        return new ResponseEntity<>(apiResponse,HttpStatus.FORBIDDEN);
     }
 }

@@ -6,7 +6,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -34,4 +36,15 @@ public class User extends BaseEntity{
             inverseJoinColumns = @JoinColumn(name = "role_id",referencedColumnName = "id")
     )
     private Set<Role> roles = new HashSet<>();
+
+    @ManyToMany(cascade = {CascadeType.PERSIST,CascadeType.MERGE} ,fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "user_address",
+            joinColumns = @JoinColumn(name = "user_id",referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "address_id",referencedColumnName = "id")
+    )
+    private List<Address> addresses = new ArrayList<>();
+
+    @OneToOne(mappedBy = "user",cascade = {CascadeType.PERSIST,CascadeType.MERGE})
+    private Cart cart;
 }

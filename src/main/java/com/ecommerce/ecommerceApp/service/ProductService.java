@@ -1,8 +1,8 @@
 package com.ecommerce.ecommerceApp.service;
 
-import com.ecommerce.ecommerceApp.dto.ProductDto;
-import com.ecommerce.ecommerceApp.entity.Product;
 import com.ecommerce.ecommerceApp.helper.response.ApiResponse;
+import com.ecommerce.ecommerceApp.payload.request.ProductRequest;
+import com.ecommerce.ecommerceApp.payload.response.ProductResponse;
 
 import java.util.List;
 
@@ -13,13 +13,12 @@ import java.util.List;
  */
 public interface ProductService {
 
-    public ProductDto createProduct(Product product);
-    //public List<Product> getAllProduct();
-    public ProductDto getProductById(int id);
-    public ProductDto updateProduct(int id, Product product);
+    public ProductResponse createProduct(ProductRequest productRequest);
+    public ProductResponse getProductById(int id);
+    public ProductResponse updateProduct(int id, ProductRequest product);
     public ApiResponse deleteProduct(int id);
-    public List<ProductDto> getAllProduct();
+    public List<ProductResponse> getAllProduct();
 
-    public List<ProductDto> searchProductByCategory(String categoryName);
+    public List<ProductResponse> searchProductByCategory(String categoryName);
 
 }

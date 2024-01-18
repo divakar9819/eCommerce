@@ -17,8 +17,13 @@ public class UserNotFoundException extends RuntimeException{
 
     public UserNotFoundException(String resourceName,String fieldName,String fieldValue){
         super(String.format("%s is not found %s : %s",resourceName,fieldName,fieldValue));
+        System.out.println("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
         this.resourceName = resourceName;
         this.fieldName = fieldName;
         this.fieldValue = fieldValue;
+    }
+
+    public UserNotFoundException(String message){
+        super(message);
     }
 }

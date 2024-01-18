@@ -43,7 +43,6 @@ public class JwtsTokenHelper implements IJwtTokenHelper{
     public boolean validateJwtToken(SecretKey secretKey, AccessToken accessToken) {
         try {
             String secretKeyEncoded = Base64.getEncoder().encodeToString(secretKey.getSecretKey().getBytes());
-            //Jwts.parser().setSigningKey(secretKeyEncoded).parseClaimsJwt(accessToken.getAccessToken());
             Claims claims = Jwts.parser().setSigningKey(secretKeyEncoded).parseClaimsJws(accessToken.getAccessToken()).getBody();
             Date expiration = claims.getExpiration();
             Date now = new Date();
@@ -54,6 +53,7 @@ public class JwtsTokenHelper implements IJwtTokenHelper{
             return true;
         }
         catch (JwtException | IllegalArgumentException exception){
+            System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%55");
             throw  new CustomSecurityException(ApiMessage.INVALID_TOKEN, HttpStatus.INTERNAL_SERVER_ERROR);
 
         }
@@ -81,4 +81,6 @@ public class JwtsTokenHelper implements IJwtTokenHelper{
        // Handle the case where the username is null or an exception occurred
         return null;
     }
+
+
 }

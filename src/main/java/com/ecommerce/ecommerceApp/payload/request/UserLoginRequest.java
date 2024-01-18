@@ -1,4 +1,4 @@
-package com.ecommerce.ecommerceApp.dto;
+package com.ecommerce.ecommerceApp.payload.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,7 +14,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Setter
 @Getter
-public class UserLoginDto {
+public class UserLoginRequest {
     private String username;
     private String password;
 }

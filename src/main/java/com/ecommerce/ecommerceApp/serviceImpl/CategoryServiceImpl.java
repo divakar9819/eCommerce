@@ -1,9 +1,12 @@
 package com.ecommerce.ecommerceApp.serviceImpl;
 
-import com.ecommerce.ecommerceApp.dto.CategoryDto;
-import com.ecommerce.ecommerceApp.dto.ProductDto;
 import com.ecommerce.ecommerceApp.entity.Category;
 import com.ecommerce.ecommerceApp.entity.Product;
+import com.ecommerce.ecommerceApp.exception.ResourceNotFoundException;
+import com.ecommerce.ecommerceApp.payload.request.CategoryRequest;
+import com.ecommerce.ecommerceApp.payload.request.ProductRequest;
+import com.ecommerce.ecommerceApp.payload.response.CategoryResponse;
+import com.ecommerce.ecommerceApp.payload.response.ProductResponse;
 import com.ecommerce.ecommerceApp.repository.CategoryRepository;
 import com.ecommerce.ecommerceApp.service.CategoryService;
 import org.modelmapper.ModelMapper;
@@ -26,32 +29,51 @@ public class CategoryServiceImpl implements CategoryService {
     @Autowired
     private ModelMapper modelMapper;
     @Override
-    public CategoryDto createCategory(Category category) {
+    public CategoryResponse createCategory(CategoryRequest categoryRequest) {
+        Category category = categoryRequestToCategory(categoryRequest);
         for(Product product: category.getProducts()){
             product.setCategory(category);
         }
         Category createdCategory = categoryRepository.save(category);
-        return categoryToCategoryDto(createdCategory);
+        return categoryToCategoryResponse(createdCategory);
     }
 
     @Override
-    public List<CategoryDto> getAllCategory() {
+    public List<CategoryResponse> getAllCategory() {
         List<Category> categories = categoryRepository.findAll();
-        List<CategoryDto> categoryDtos = categories.stream().map(this::categoryToCategoryDto).toList();
-        return categoryDtos;
+        List<CategoryResponse> categoryResponses = categories.stream().map(this::categoryToCategoryResponse).toList();
+        return categoryResponses;
     }
 
-    public CategoryDto categoryToCategoryDto(Category category){
-        CategoryDto categoryDto = new CategoryDto();
-        categoryDto.setId(category.getId());
-        categoryDto.setCategoryName(category.getCategoryName());
+    @Override
+    public CategoryResponse getCategoryById(int id) {
+        Category category = categoryRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Category","categoryId",String.valueOf(id)));
+        return categoryToCategoryResponse(category);
+    }
+
+    public CategoryResponse categoryToCategoryResponse(Category category){
+        CategoryResponse categoryResponse = new CategoryResponse();
+        categoryResponse.setId(category.getId());
+        categoryResponse.setCategoryName(category.getCategoryName());
         List<Product> products = category.getProducts();
-        List<ProductDto> productDtos = products.stream().map(this::productToProductDto).toList();
-        categoryDto.setProductDtos(productDtos);
-        return  categoryDto;
+        List<ProductResponse> productResponses = products.stream().map(this::productToProductResponse).toList();
+        categoryResponse.setProductResponses(productResponses);
+        return categoryResponse;
+    }
+    public ProductResponse productToProductResponse(Product product){
+        return this.modelMapper.map(product,ProductResponse.class);
     }
 
-    public ProductDto productToProductDto(Product product){
-        return this.modelMapper.map(product,ProductDto.class);
+    public Category categoryRequestToCategory(CategoryRequest categoryRequest){
+        Category category = new Category();
+        category.setCategoryName(categoryRequest.getCategoryName());
+        List<ProductRequest> productRequests = categoryRequest.getProductRequests();
+        List<Product> products = productRequests.stream().map(this::productRequestToProduct).toList();
+        category.setProducts(products);
+        return category;
+    }
+
+    public Product productRequestToProduct(ProductRequest productRequest){
+        return this.modelMapper.map(productRequest,Product.class);
     }
 }

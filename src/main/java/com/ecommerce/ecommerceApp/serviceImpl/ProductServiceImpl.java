@@ -1,11 +1,13 @@
 package com.ecommerce.ecommerceApp.serviceImpl;
 
-import com.ecommerce.ecommerceApp.dto.CategoryDto;
-import com.ecommerce.ecommerceApp.dto.ProductDto;
 import com.ecommerce.ecommerceApp.entity.Category;
 import com.ecommerce.ecommerceApp.entity.Product;
 import com.ecommerce.ecommerceApp.exception.ResourceNotFoundException;
 import com.ecommerce.ecommerceApp.helper.response.ApiResponse;
+import com.ecommerce.ecommerceApp.payload.request.CategoryRequest;
+import com.ecommerce.ecommerceApp.payload.request.ProductRequest;
+import com.ecommerce.ecommerceApp.payload.response.CategoryResponse;
+import com.ecommerce.ecommerceApp.payload.response.ProductResponse;
 import com.ecommerce.ecommerceApp.repository.ProductRepository;
 import com.ecommerce.ecommerceApp.service.ProductService;
 import jakarta.transaction.Transactional;
@@ -32,18 +34,31 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private ModelMapper modelMapper;
     @Override
-    public ProductDto createProduct(Product product) {
+    public ProductResponse createProduct(ProductRequest productRequest) {
+        Product product = productRequestToProduct(productRequest);
         Product createdProduct = productRepository.save(product);
-        return productToProductDto(createdProduct);
+        return productToProductResponse(createdProduct);
     }
 
     @Override
-    public ProductDto getProductById(int id) {
-        return null;
+    public ProductResponse getProductById(int id) {
+        Product product = productRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Product","productId",String.valueOf(id)));
+        ProductResponse productResponse = productToProductResponse(product);
+        return productResponse;
     }
 
     @Override
-    public ProductDto updateProduct(int id, Product product) {
+    public ProductResponse updateProduct(int id, ProductRequest productRequest) {
+        Product product = productRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Product","productId",String.valueOf(id)));
+        if(productRequest.getProductName()!=null){
+            product.setProductName(productRequest.getProductName());
+        }
+        if(productRequest.getPrice()!=0.0){
+            product.setPrice(productRequest.getPrice());
+        }
+        if(productRequest.getDiscount()!=0){
+
+        }
         return null;
     }
 
@@ -53,38 +68,59 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductDto> getAllProduct() {
+    public List<ProductResponse> getAllProduct() {
         List<Product> products = productRepository.findAll();
-        System.out.println(products.get(0).getCategory().getCategoryName());
-        List<ProductDto> productDtos = products.stream().map(this::productToProductDto).toList();
-        return productDtos;
+        List<ProductResponse> productResponses = products.stream().map(this::productToProductResponse).toList();
+        return productResponses;
     }
 
     @Override
-    public List<ProductDto> searchProductByCategory(String categoryName) {
+    public List<ProductResponse> searchProductByCategory(String categoryName) {
         List<Product> products = productRepository.findByCategory_CategoryName(categoryName);
         if(products.isEmpty()){
             throw new ResourceNotFoundException("Product","categoryName",categoryName);
         }
         else {
-            List<ProductDto> productDtos = products.stream().map(this::productToProductDto).toList();
-            return productDtos;
+
+            List<ProductResponse> productResponses = products.stream().map(this::productToProductResponse).toList();
+            return productResponses;
         }
     }
 
-    public ProductDto productToProductDto(Product product){
-        ProductDto productDto = new ProductDto();
-        productDto.setId(product.getId());
-        productDto.setProductName(product.getProductName());
-        productDto.setPrice(product.getPrice());
-        productDto.setDiscount(product.getDiscount());
-        productDto.setDescription(product.getDescription());
-        System.out.println(product.getCategory().getCategoryName());
-        productDto.setCategoryDto(categoryToCategoryDto(product.getCategory()));
-        return productDto;
+
+    public Product productRequestToProduct(ProductRequest productRequest){
+        Product product = new Product();
+        product.setProductName(productRequest.getProductName());
+        product.setPrice(productRequest.getPrice());
+        product.setDiscount(productRequest.getDiscount());
+        product.setDescription(productRequest.getDescription());
+        product.setCategory(categoryRequestToCategory(productRequest.getCategoryRequest()));
+        return product;
     }
 
-    public CategoryDto categoryToCategoryDto(Category category){
-        return this.modelMapper.map(category,CategoryDto.class);
+    public Category categoryRequestToCategory(CategoryRequest categoryRequest){
+        return this.modelMapper.map(categoryRequest,Category.class);
     }
+
+    public ProductResponse productToProductResponse(Product product){
+        ProductResponse productResponse = new ProductResponse();
+        productResponse.setId(product.getId());
+        productResponse.setProductName(product.getProductName());
+        productResponse.setPrice(product.getPrice());
+        productResponse.setDiscount(product.getDiscount());
+        productResponse.setDescription(product.getDescription());
+        Category category = product.getCategory();
+        productResponse.setCategoryResponse(categoryToCategoryResponse(category));
+        return productResponse;
+    }
+
+//    public CategoryDto categoryToCategoryDto(Category category){
+//        return this.modelMapper.map(category,CategoryDto.class);
+//    }
+
+    public CategoryResponse categoryToCategoryResponse(Category category){
+        return this.modelMapper.map(category,CategoryResponse.class);
+    }
+
+
 }

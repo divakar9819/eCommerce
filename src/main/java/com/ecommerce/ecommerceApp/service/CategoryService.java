@@ -1,7 +1,6 @@
 package com.ecommerce.ecommerceApp.service;
-
-import com.ecommerce.ecommerceApp.dto.CategoryDto;
-import com.ecommerce.ecommerceApp.entity.Category;
+import com.ecommerce.ecommerceApp.payload.request.CategoryRequest;
+import com.ecommerce.ecommerceApp.payload.response.CategoryResponse;
 
 import java.util.List;
 
@@ -11,7 +10,8 @@ import java.util.List;
  * @mail_to: vermadivakar2022@gmail.com
  */
 public interface CategoryService {
-    public CategoryDto createCategory(Category category);
+    public CategoryResponse createCategory(CategoryRequest categoryRequest);
 
-    public List<CategoryDto> getAllCategory();
+    public List<CategoryResponse> getAllCategory();
+    public CategoryResponse getCategoryById(int id);
 }

@@ -1,26 +1,31 @@
 package com.ecommerce.ecommerceApp.serviceImpl;
 
-import com.ecommerce.ecommerceApp.dto.UserLoginDto;
-import com.ecommerce.ecommerceApp.dto.UserRegisterDto;
+import com.ecommerce.ecommerceApp.payload.request.AddressRequest;
+import com.ecommerce.ecommerceApp.payload.request.UserLoginRequest;
+import com.ecommerce.ecommerceApp.payload.request.UserRegisterRequest;
+import com.ecommerce.ecommerceApp.entity.Address;
 import com.ecommerce.ecommerceApp.entity.Role;
 import com.ecommerce.ecommerceApp.entity.User;
-import com.ecommerce.ecommerceApp.exception.security.CustomSecurityException;
+import com.ecommerce.ecommerceApp.exception.UserNotFoundException;
+import com.ecommerce.ecommerceApp.payload.response.AddressResponse;
+import com.ecommerce.ecommerceApp.payload.response.RoleResponse;
+import com.ecommerce.ecommerceApp.payload.response.UserRegisterResponse;
 import com.ecommerce.ecommerceApp.repository.UserRepository;
 import com.ecommerce.ecommerceApp.service.AuthService;
-import com.ecommerce.ecommerceApp.utils.constant.ApiMessage;
 import com.ecommerce.ecommerceApp.utils.security.AccessToken;
 import com.ecommerce.ecommerceApp.utils.security.ITokenProvider;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author Divakar Verma
@@ -42,32 +47,72 @@ public class AuthServiceImpl implements AuthService {
     @Autowired
     private ITokenProvider tokenProvider;
     @Override
-    public UserRegisterDto userRegistration(UserRegisterDto userRegisterDto) {
-        userRegisterDto.setPassword(passwordEncoder.encode(userRegisterDto.getPassword()));
-        User createdUser = userRepository.save(userDtoTouser(userRegisterDto));
-        return userToUserDto(createdUser);
+    public UserRegisterResponse userRegistration(UserRegisterRequest userRegisterRequest) {
+        userRegisterRequest.setPassword(passwordEncoder.encode(userRegisterRequest.getPassword()));
+        User user = userRequestToUser(userRegisterRequest);
+        List< Address> addresses = new ArrayList<>();
+        for(AddressRequest addressRequest : userRegisterRequest.getAddressRequests()){
+            addressRequest.setCity(addressRequest.getCity());
+            addressRequest.setState(addressRequest.getState());
+            addressRequest.setStreet(addressRequest.getStreet());
+            addressRequest.setPinCode(addressRequest.getPinCode());
+            addresses.add(addressRequestToAddress(addressRequest));
+        }
+        user.setAddresses(addresses);
+        User createdUser = userRepository.save(user);
+        return userToUserResponse(createdUser);
     }
 
     @Override
-    public AccessToken userLogin(UserLoginDto userLoginDto) {
-        String username = userLoginDto.getUsername();
-        String password = userLoginDto.getPassword();
-        try {
-            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username,password));
+    public AccessToken userLogin(UserLoginRequest userLoginRequest) {
+        String username = userLoginRequest.getUsername();
+        String password = userLoginRequest.getPassword();
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username,password));
+        if(authentication.isAuthenticated()){
             Set<Role> roles = userRepository.findByUsername(username).get().getRoles();
             return tokenProvider.createToken(username,roles);
-
-        }catch (AuthenticationException exception) {
-            throw new CustomSecurityException(ApiMessage.BAD_CREDENTIALS, HttpStatus.BAD_REQUEST);
-
         }
+        else {
+            throw new UserNotFoundException("Invalid user credentials");
+        }
+
     }
 
-    public User userDtoTouser(UserRegisterDto userRegisterDto){
-        return this.modelMapper.map(userRegisterDto,User.class);
+    @Override
+    public List<UserRegisterResponse> getAllUser() {
+        List<User> users = userRepository.findAll();
+        List<UserRegisterResponse> userRegisterResponses = users.stream().map(this::userToUserResponse).toList();
+        return userRegisterResponses;
     }
 
-    public UserRegisterDto userToUserDto(User user){
-        return this.modelMapper.map(user,UserRegisterDto.class);
+    public User userRequestToUser(UserRegisterRequest userRegisterRequest){
+        return this.modelMapper.map(userRegisterRequest,User.class);
+    }
+
+    public Address addressRequestToAddress(AddressRequest addressRequest){
+        return this.modelMapper.map(addressRequest, Address.class);
+    }
+
+    public AddressResponse addressToAddressResponse(Address address){
+        return this.modelMapper.map(address,AddressResponse.class);
+    }
+
+    public RoleResponse roleToRoleResponse(Role role){
+        return this.modelMapper.map(role,RoleResponse.class);
+    }
+
+    public UserRegisterResponse userToUserResponse(User user){
+        UserRegisterResponse userRegisterResponse = new UserRegisterResponse();
+        userRegisterResponse.setId(user.getId());
+        userRegisterResponse.setName(user.getName());
+        userRegisterResponse.setUsername(user.getUsername());
+        userRegisterResponse.setEmail(user.getEmail());
+        List<Address> addresses = user.getAddresses();
+        List<AddressResponse> addressResponses = addresses.stream().map(this::addressToAddressResponse).toList();
+        userRegisterResponse.setAddressResponses(addressResponses);
+        Set<Role> roles = user.getRoles();
+        Set<RoleResponse> roleResponses = roles.stream().map(this::roleToRoleResponse).collect(Collectors.toSet());
+        userRegisterResponse.setRoleResponses(roleResponses);
+        return userRegisterResponse;
     }
 }

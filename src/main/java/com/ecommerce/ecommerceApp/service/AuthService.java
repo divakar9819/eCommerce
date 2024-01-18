@@ -1,8 +1,11 @@
 package com.ecommerce.ecommerceApp.service;
 
-import com.ecommerce.ecommerceApp.dto.UserLoginDto;
-import com.ecommerce.ecommerceApp.dto.UserRegisterDto;
+import com.ecommerce.ecommerceApp.payload.request.UserLoginRequest;
+import com.ecommerce.ecommerceApp.payload.request.UserRegisterRequest;
+import com.ecommerce.ecommerceApp.payload.response.UserRegisterResponse;
 import com.ecommerce.ecommerceApp.utils.security.AccessToken;
+
+import java.util.List;
 
 /**
  * @author Divakar Verma
@@ -10,7 +13,9 @@ import com.ecommerce.ecommerceApp.utils.security.AccessToken;
  * @mail_to: vermadivakar2022@gmail.com
  */
 public interface AuthService {
-    public UserRegisterDto userRegistration(UserRegisterDto userRegisterDto);
-    public AccessToken userLogin(UserLoginDto userLoginDto);
+    public UserRegisterResponse userRegistration(UserRegisterRequest userRegisterRequest);
+    public AccessToken userLogin(UserLoginRequest userLoginRequest);
+
+    public List<UserRegisterResponse> getAllUser();
 
 }

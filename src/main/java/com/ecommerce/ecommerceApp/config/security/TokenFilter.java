@@ -1,6 +1,7 @@
 package com.ecommerce.ecommerceApp.config.security;
 
 import com.ecommerce.ecommerceApp.exception.security.CustomSecurityException;
+import com.ecommerce.ecommerceApp.utils.constant.ApiMessage;
 import com.ecommerce.ecommerceApp.utils.security.AccessToken;
 import com.ecommerce.ecommerceApp.utils.security.ITokenProvider;
 import jakarta.servlet.FilterChain;
@@ -8,6 +9,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -29,6 +31,12 @@ public class TokenFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         AccessToken accessToken = tokenProvider.getTokenFromHeader(request);
+//        String token = null;
+//        String username = null;
+//        if(accessToken.getAccessToken()!=null && accessToken.getAccessToken().startsWith("Bearer ")){
+//            token = accessToken.getAccessToken().substring(7);
+//
+//        }
         try {
             if(checkAccessToken(accessToken)){
                 Authentication authentication = tokenProvider.getAuthentication(accessToken);
@@ -38,8 +46,7 @@ public class TokenFilter extends OncePerRequestFilter {
         }
         catch (CustomSecurityException customSecurityException){
             SecurityContextHolder.clearContext();
-            throw customSecurityException;
-
+            throw  customSecurityException;
         }
 
     }

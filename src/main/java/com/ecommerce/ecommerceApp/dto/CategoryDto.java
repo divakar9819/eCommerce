@@ -13,14 +13,14 @@ import java.util.List;
  * @created_at : 08/01/2024 - 6:36 pm
  * @mail_to: vermadivakar2022@gmail.com
  */
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class CategoryDto implements Serializable {
-    private int id;
-    private String categoryName;
-    @JsonIgnoreProperties("category")
-    private List<ProductDto> productDtos;
-}
+//@NoArgsConstructor
+//@AllArgsConstructor
+//@Getter
+//@Setter
+//@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+//public class CategoryDto implements Serializable {
+////    private int id;
+////    private String categoryName;
+////    @JsonIgnoreProperties("category")
+////    private List<ProductDto> productDtos;
+//}
