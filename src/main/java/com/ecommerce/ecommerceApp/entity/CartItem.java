@@ -1,5 +1,6 @@
 package com.ecommerce.ecommerceApp.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,18 +15,21 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class CartItem extends BaseEntity{
 
     @ManyToOne
     @JoinColumn(name = "cart_id")
+    @JsonIgnoreProperties("cartItems")
     private Cart cart;
 
     @ManyToOne
     @JoinColumn(name = "product_id")
+    @JsonIgnoreProperties("cartItems")
     private Product product;
 
     private int quantity;
     private double discount;
-    private  double productPrice;
+    //private  double productPrice;
 
 }

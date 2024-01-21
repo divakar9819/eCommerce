@@ -1,6 +1,7 @@
 package com.ecommerce.ecommerceApp.config.bean;
 
 import com.ecommerce.ecommerceApp.exception.security.CustomAuthenticationEntryPoint;
+import com.ecommerce.ecommerceApp.helper.Helper;
 import com.ecommerce.ecommerceApp.serviceImpl.security.CustomUserDetailsService;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
@@ -44,5 +45,10 @@ public class ConfigBean {
     @Bean
     public AuthenticationEntryPoint authenticationEntryPoint(){
         return  new CustomAuthenticationEntryPoint();
+    }
+
+    @Bean
+    public Helper helper(){
+        return new Helper();
     }
 }

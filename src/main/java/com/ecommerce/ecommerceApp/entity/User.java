@@ -1,5 +1,6 @@
 package com.ecommerce.ecommerceApp.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -45,6 +46,7 @@ public class User extends BaseEntity{
     )
     private List<Address> addresses = new ArrayList<>();
 
+    @JsonIgnoreProperties("user")
     @OneToOne(mappedBy = "user",cascade = {CascadeType.PERSIST,CascadeType.MERGE})
     private Cart cart;
 }

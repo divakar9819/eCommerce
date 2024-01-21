@@ -1,7 +1,7 @@
 package com.ecommerce.ecommerceApp.exception;
 
 import com.ecommerce.ecommerceApp.exception.security.CustomSecurityException;
-import com.ecommerce.ecommerceApp.helper.response.ApiResponse;
+import com.ecommerce.ecommerceApp.helper.ApiResponse;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -3,21 +3,18 @@ package com.ecommerce.ecommerceApp.serviceImpl;
 import com.ecommerce.ecommerceApp.entity.Category;
 import com.ecommerce.ecommerceApp.entity.Product;
 import com.ecommerce.ecommerceApp.exception.ResourceNotFoundException;
-import com.ecommerce.ecommerceApp.helper.response.ApiResponse;
+import com.ecommerce.ecommerceApp.helper.ApiResponse;
 import com.ecommerce.ecommerceApp.payload.request.CategoryRequest;
 import com.ecommerce.ecommerceApp.payload.request.ProductRequest;
 import com.ecommerce.ecommerceApp.payload.response.CategoryResponse;
 import com.ecommerce.ecommerceApp.payload.response.ProductResponse;
 import com.ecommerce.ecommerceApp.repository.ProductRepository;
 import com.ecommerce.ecommerceApp.service.ProductService;
-import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author Divakar Verma

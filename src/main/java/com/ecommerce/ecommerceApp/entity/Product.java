@@ -30,6 +30,7 @@ public class Product extends BaseEntity implements Serializable {
     @JsonIgnoreProperties("products")
     private Category category;
 
+    @JsonIgnoreProperties("product")
     @OneToMany(mappedBy = "product",cascade = {CascadeType.PERSIST,CascadeType.MERGE})
     private List<CartItem> cartItems = new ArrayList<>();
 

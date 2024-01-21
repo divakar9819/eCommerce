@@ -1,5 +1,6 @@
 package com.ecommerce.ecommerceApp.serviceImpl;
 
+import com.ecommerce.ecommerceApp.entity.Cart;
 import com.ecommerce.ecommerceApp.payload.request.AddressRequest;
 import com.ecommerce.ecommerceApp.payload.request.UserLoginRequest;
 import com.ecommerce.ecommerceApp.payload.request.UserRegisterRequest;
@@ -59,6 +60,9 @@ public class AuthServiceImpl implements AuthService {
             addresses.add(addressRequestToAddress(addressRequest));
         }
         user.setAddresses(addresses);
+        Cart cart = new Cart();
+        user.setCart(cart);
+        cart.setUser(user);
         User createdUser = userRepository.save(user);
         return userToUserResponse(createdUser);
     }

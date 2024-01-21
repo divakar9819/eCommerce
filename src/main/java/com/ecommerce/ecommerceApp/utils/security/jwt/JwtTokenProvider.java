@@ -33,6 +33,8 @@ public class JwtTokenProvider implements ITokenProvider {
     @Autowired
     private UserDetailsService userDetailsService;
 
+    private static String username;
+
     @Override
     public AccessToken createToken(String username, Set<Role> roles) {
         SecretKey secretKey = new SecretKey(secretKeyValue, expiration);
@@ -58,10 +60,14 @@ public class JwtTokenProvider implements ITokenProvider {
     @Override
     public Authentication getAuthentication(AccessToken accessToken) {
         SecretKey secretKey = new SecretKey(secretKeyValue, expiration);
-        String username = jwtTokenHelper.getUsernameFromJwtToken(secretKey, accessToken);
+        username = jwtTokenHelper.getUsernameFromJwtToken(secretKey, accessToken);
         System.out.println(username);
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
         Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
         return authentication;
+    }
+
+    public static String getUsername(){
+        return username;
     }
 }

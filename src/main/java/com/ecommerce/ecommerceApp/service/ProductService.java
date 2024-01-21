@@ -1,6 +1,6 @@
 package com.ecommerce.ecommerceApp.service;
 
-import com.ecommerce.ecommerceApp.helper.response.ApiResponse;
+import com.ecommerce.ecommerceApp.helper.ApiResponse;
 import com.ecommerce.ecommerceApp.payload.request.ProductRequest;
 import com.ecommerce.ecommerceApp.payload.response.ProductResponse;
 
